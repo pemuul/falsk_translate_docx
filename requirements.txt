@@ -1,0 +1,6 @@
+msgpack-python
+celery[redis]
+#matplotlib
+flask
+deep-translator
+python-docx 

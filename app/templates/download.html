@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+        crossorigin="anonymous"
+    />
+
+    <title>Docx переводчик</title>
+</head>
+<body>
+    <style>
+        #prog {
+            width: 400px;
+            border: 1px solid red;
+            height: 20px;
+        }
+        #bar {
+            width: 0px;
+            background-color: blue;
+            height: 20px;
+        }
+    </style>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Docx переводчик</a>
+        <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+        >
+        <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    <h3>Скачать готовый файл</h3>
+    <div id="imgpl">Файл подготавливается, подождите немного :)</div>
+
+    <div id="wrapper"><div id="prog"><div id="bar"></div></div></div>
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script>
+        var end_file;
+        function poll() {
+            $.ajax("{{url_for('.progress', jobid=JOBID)}}", {
+                dataType: "json"
+                , success: function(resp) {
+                    $("#bar").css({width: $("#prog").width() * resp.progress});
+                    if(resp.progress >= 0.99) {
+                        $("#wrapper").html('');
+                        $.get("result?jobid={{JOBID}}", function(data, status){
+                            end_file=data;
+                            $("#imgpl").html(
+                                '<div class="container" align="left"><a href="/return-files/' + end_file + '" target="blank"><button class="btn btn-success">Скачать</button></a></div>');
+                            console.log("success")
+                            });           
+                        return;
+                    } else {
+                        setTimeout(poll, 500.0);
+                    }
+        
+                }
+            });
+        
+        }
+
+
+        
+        $(function() {
+            var JOBID = "{{ JOBID }}";
+            poll();
+        
+        });
+    </script>
+</body>
+</html>
