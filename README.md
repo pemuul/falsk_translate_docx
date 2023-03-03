@@ -1,5 +1,8 @@
 Скачиваем репозиторий 
 
+Перейдите в скачаную папку: 
+-> cd flask_translate_docx 
+
 Выполните: 
 -> docker-compose up
 
